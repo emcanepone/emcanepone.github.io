@@ -29,21 +29,24 @@ body {
   background: #0000;
   color: #fff; }
 
-h1, h2, h3, h4, h5 {
-  color: #dbdbdb;
+h1, h2, h3, h4, h5, {
+  color: #ffffff;
   font-weight: 200;
   font-size: 20px; }
 
 h2 {  
-  line-height: 15px; }
+  line-height: 15px;
+  font-weight: 100;
+  font-size: 20px;
+  color: white; }
 
 h3 {  
-    line-height: 25px; }
+  line-height: 25px; }
 
 h6 {
-  color: #dbdbdb;
-  font-weight: 150;
-  font-size: 15px; }
+  color: #000000;
+  font-weight: 200;
+  font-size: 20px; }
 
 h7 {
   color: rgb(90, 90, 90);
@@ -72,6 +75,14 @@ a {
   padding-right: 20px;
 }
 
+.text-block2 {
+  position: absolute;
+  bottom: 50px;
+  right: 200px;
+  color: rgb(0, 0, 0);
+  opacity: 1;;
+}
+
 .site-navbar {
   border: none;
   -webkit-box-shadow: none;
@@ -97,7 +108,7 @@ a {
     background: transparent !important; }
     @media (max-width: 991.98px) {
       .site-navbar.bg-light {
-        background: #fff !important;
+        background: white !important;
         top: 0; }
         .site-navbar.bg-light .navbar-brand {
           display: inline-block;
@@ -171,7 +182,7 @@ a {
   background-repeat: no-repeat;
   position: relative;
   overflow: hidden; }
-  .site-hero, .site-hero .row {
+ .site-hero, .site-hero .row {
     height: 100vh;
     min-height: 800px; }
   .site-hero:before {
@@ -203,7 +214,7 @@ a {
     color: rgba(255, 255, 255, 0.5); }
 
 .site-section {
-  padding: 5em 0; }
+  padding: 2em 0; }
 
 .section-heading {
   margin-bottom: 30px;
