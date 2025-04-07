@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Eugenia Maria Canepone - Digital Card</title>
-    <!-- Added Poppins font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -24,6 +23,7 @@
             justify-content: center;
             align-items: center;
             padding: 30px;
+            overflow: hidden;
         }
         
         .card {
@@ -46,14 +46,14 @@
         .logo-container {
             width: 50px;
             height: 50px;
-            margin: 0 auto 30px; /* 30px spacing before name */
+            margin: 0 auto 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #f5f5f5;
             border-radius: 8px;
             padding: 8px;
-			padding-top: 30px;
+            padding-top: 30px;
         }
         
         .logo {
@@ -73,16 +73,16 @@
             font-size: 14px;
             font-weight: 400;
             color: #333;
-            margin-bottom: 30px; /* 30px spacing after title */
+            margin-bottom: 30px;
             text-transform: uppercase;
         }
         
         .contact-info {
             border-top: 1px solid #ddd;
-            padding-top: 30px; /* 30px spacing after divider line */
+            padding-top: 30px;
             width: 100%;
             font-size: 12px;
-            margin-bottom: 30px; /* 30px spacing before QR code */
+            margin-bottom: 30px;
         }
         
         .contact-item {
@@ -127,6 +127,12 @@
             border-radius: 10px;
             margin-bottom: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .qr-container:hover {
+            transform: scale(1.05);
         }
         
         .qr-text {
@@ -135,6 +141,61 @@
             text-transform: uppercase;
         }
         
+        /* Modal for QR code zoom */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            background: none;
+            border: none;
+        }
+        
+        /* Download button */
+        .download-btn {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .download-btn:hover {
+            background-color: #333;
+        }
+
         @media (max-width: 480px) {
             .card {
                 border-radius: 12px;
@@ -187,21 +248,88 @@
         <div class="qr-section">
             <div class="qr-container" id="qrcode"></div>
             <p class="qr-text">SCAN TO SAVE CONTACT</p>
+            <button class="download-btn" id="downloadBtn">
+                <i class="fas fa-download"></i> Save Contact
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal for QR code zoom -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <button class="close-button" id="closeModal">&times;</button>
+            <div id="modalQrcode"></div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // VCard data
+            const vcardData = "BEGIN:VCARD\nVERSION:3.0\nN:Canepone;Eugenia Maria;;;\nFN:Eugenia Maria Canepone\nTITLE:Industrial Designer\nORG:Studio Volpi Srl\nEMAIL:em_canepone@studiovolpi.com\nTEL:+393405561612\nURL:https://www.studiovolpi.com\nEND:VCARD";
+            
             // Generate QR code
             const qrCode = new QRCode(document.getElementById("qrcode"), {
-                text: "BEGIN:VCARD\nVERSION:3.0\nN:Canepone;Eugenia Maria;;;\nFN:Eugenia Maria Canepone\nTITLE:Industrial Designer\nORG:Studio Volpi Srl\nEMAIL:em_canepone@studiovolpi.com\nTEL:+393405561612\nURL:https://www.studiovolpi.com\nEND:VCARD",
+                text: vcardData,
                 width: 190,
                 height: 190,
                 colorDark: "#000000",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
+            
+            // Generate larger QR code for modal
+            const modalQrCode = new QRCode(document.getElementById("modalQrcode"), {
+                text: vcardData,
+                width: 300,
+                height: 300,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Modal functionality
+            const modal = document.getElementById("qrModal");
+            const qrContainer = document.getElementById("qrcode");
+            const closeBtn = document.getElementById("closeModal");
+            
+            qrContainer.addEventListener("click", function() {
+                modal.style.display = "flex";
+            });
+            
+            closeBtn.addEventListener("click", function() {
+                modal.style.display = "none";
+            });
+            
+            window.addEventListener("click", function(event) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            });
+            
+            // Download contact functionality
+            document.getElementById("downloadBtn").addEventListener("click", function() {
+                // Create a blob with vCard data
+                const blob = new Blob([vcardData], { type: "text/vcard" });
+                const url = window.URL.createObjectURL(blob);
+                
+                // Create a temporary anchor element to download the file
+                const a = document.createElement("a");
+                a.style.display = "none";
+                a.href = url;
+                a.download = "Eugenia_Maria_Canepone.vcf";
+                document.body.appendChild(a);
+                a.click();
+                
+                // Clean up
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            });
+            
+            // Prevent touchmove on mobile to disable scrolling
+            document.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+            }, { passive: false });
         });
     </script>
 </body>
